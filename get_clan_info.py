@@ -37,7 +37,7 @@ def get_clan_members(tag):
     response = requests.get(url, headers=headers)
 
     clan_members_df = pd.json_normalize(response.json()['items'])
-    clan_members_df = clan_members_df.drop(columns=[col for col in df.columns if col not in ['tag', 'name', 'role', 'townHallLevel']])
+    clan_members_df = clan_members_df.drop(columns=[col for col in clan_members_df.columns if col not in ['tag', 'name', 'role', 'townHallLevel']])
 
     return clan_members_df
  
