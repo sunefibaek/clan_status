@@ -9,7 +9,7 @@ import datetime
 def get_clan_name(tag):
     processed_tag = tag.replace("#", "%23")
 
-    # bearer_token = os.environ.get("COC_API_TOKEN")
+    #bearer_token = os.environ.get("COC_API_TOKEN")
     bearer_token = st.secrets["COC_API_TOKEN"]
 
     headers = {
@@ -26,7 +26,7 @@ def get_clan_name(tag):
 def get_clan_members(tag):
     processed_tag = tag.replace("#", "%23")
 
-    # bearer_token = os.environ.get("COC_API_TOKEN")
+    #bearer_token = os.environ.get("COC_API_TOKEN")
     bearer_token = st.secrets["COC_API_TOKEN"]
 
     headers = {
@@ -50,7 +50,7 @@ def clan_member_status(get_clan_members, tag):
 
         url = f"https://api.clashofclans.com/v1/players/{processed_tag}"
         
-        # bearer_token = os.environ.get("COC_API_TOKEN")
+        #bearer_token = os.environ.get("COC_API_TOKEN")
         bearer_token = st.secrets["COC_API_TOKEN"]
 
         headers = {
@@ -71,12 +71,24 @@ def clan_member_status(get_clan_members, tag):
 
     return clan_members_df
 
+def bearer_token():
+    bearer_token = st.secrets["COC_API_TOKEN"]
+    #bearer_token = os.environ.get("COC_API_TOKEN")
+    headers = {
+        "Authorization": f"Bearer {bearer_token}"
+    }    
+    return headers
+
+st.write(bearer_token())
+
 # Building the streamlit app #
 st.markdown("""
     ## Clan member status
 """)
 
 clan_tag = st.text_input("Enter clan tag in the form #nnnnnnnn:")
+
+
 
 if st.button('Update'):
     clan_members_df = clan_member_status(get_clan_members, clan_tag)
