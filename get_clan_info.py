@@ -26,8 +26,8 @@ def get_clan_name(tag):
 def get_clan_members(tag):
     processed_tag = tag.replace("#", "%23")
 
-    bearer_token = os.environ.get("COC_API_TOKEN")
-    #bearer_token = st.secrets["COC_API_TOKEN"]
+    #bearer_token = os.environ.get("COC_API_TOKEN")
+    bearer_token = st.secrets["COC_API_TOKEN"]
 
     headers = {
         "Authorization": f"Bearer {bearer_token}"
