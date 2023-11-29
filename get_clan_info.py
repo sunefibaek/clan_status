@@ -78,6 +78,13 @@ st.markdown("""
     ## Clan member status
 """)
 
+def get_public_ip():
+    response = requests.get('https://api.ipify.org')
+    ip_address = response.text
+    return ip_address
+
+st.write("Your public IP address is:", get_public_ip())
+
 clan_tag = st.text_input("Enter clan tag in the form #nnnnnnnn:")
 
 if st.button('Update'):
