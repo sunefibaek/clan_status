@@ -4,7 +4,7 @@ import pandas as pd
 import json
 import streamlit as st
 import datetime
-#clan_tag = "#V80U2J88"
+clan_tag = "#V80U2J88"
 
 def get_clan_name(tag):
     processed_tag = tag.replace("#", "%23")
@@ -26,8 +26,8 @@ def get_clan_name(tag):
 def get_clan_members(tag):
     processed_tag = tag.replace("#", "%23")
 
-    #bearer_token = os.environ.get("COC_API_TOKEN")
-    bearer_token = st.secrets["COC_API_TOKEN"]
+    bearer_token = os.environ.get("COC_API_TOKEN")
+    #bearer_token = st.secrets["COC_API_TOKEN"]
 
     headers = {
         "Authorization": f"Bearer {bearer_token}"
@@ -40,7 +40,7 @@ def get_clan_members(tag):
     clan_members_df = clan_members_df.drop(columns=[col for col in clan_members_df.columns if col not in ['tag', 'name', 'role', 'townHallLevel']])
 
     return clan_members_df
- 
+
 def clan_member_status(get_clan_members, tag):
     clan_member_status_df = get_clan_members(tag)
     api_data = []
@@ -71,24 +71,15 @@ def clan_member_status(get_clan_members, tag):
 
     return clan_members_df
 
-def bearer_token():
-    bearer_token = st.secrets["COC_API_TOKEN"]
-    #bearer_token = os.environ.get("COC_API_TOKEN")
-    headers = {
-        "Authorization": f"Bearer {bearer_token}"
-    }    
-    return headers
-
-st.write(bearer_token())
-
 # Building the streamlit app #
 st.markdown("""
     ## Clan member status
 """)
 
+import lib.setup
+st.write("Your public IP address is:", lib.setup.get_public_ip())
+
 clan_tag = st.text_input("Enter clan tag in the form #nnnnnnnn:")
-
-
 
 if st.button('Update'):
     clan_members_df = clan_member_status(get_clan_members, clan_tag)
