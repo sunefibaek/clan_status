@@ -11,7 +11,7 @@ async def get_coc_client():
     coc_client = coc.Client()
     try:
         #await coc_client.login(os.getenv('COC_API_EMAIL'), os.getenv('COC_API_PASSWORD'))
-        await coc_client.login(st.secrets['COC_API_TOKEN'], st.secrets["COC_API_PASSWORD"])
+        await coc_client.login(st.secrets['COC_API_EMAIL'], st.secrets["COC_API_PASSWORD"])
     except coc.InvalidCredentials as error:
         exit(error)
     return coc_client
@@ -60,7 +60,6 @@ else:
 
 if st.button('Generate Excel File'):
     towrite = io.BytesIO()
-    #clan_member_status(get_clan_members, clan_tag).to_excel(towrite, index=False)
     asyncio.run(get_clan_members_war_status(clan_tag)).to_excel(towrite, index=False)
     towrite.seek(0)
     st.download_button(
