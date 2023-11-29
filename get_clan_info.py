@@ -4,7 +4,9 @@ import pandas as pd
 import json
 import streamlit as st
 import datetime
-clan_tag = "#V80U2J88"
+import io
+
+# clan_tag = "#V80U2J88"
 
 def get_clan_name(tag):
     processed_tag = tag.replace("#", "%23")
@@ -20,7 +22,7 @@ def get_clan_name(tag):
     response = requests.get(url, headers=headers)
 
     clan_name = response.json().get('name', None)
-      # Replace spaces with underscores
+
     return clan_name
 
 def get_clan_members(tag):
@@ -75,9 +77,6 @@ def clan_member_status(get_clan_members, tag):
 st.markdown("""
     ## Clan member status
 """)
-
-import lib.setup
-st.write("Your public IP address is:", lib.setup.get_public_ip())
 
 clan_tag = st.text_input("Enter clan tag in the form #nnnnnnnn:")
 
