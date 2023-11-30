@@ -70,7 +70,7 @@ if st.session_state.fetch_pressed:
     if st.button('Generate Excel File'):  
         towrite = io.BytesIO()  
         downloaded_data, _, _ = asyncio.run(get_clan_members_war_status(clan_tag))  
-        downloaded_data.to_excel(towrite, encoding='utf-8', index=False)  
+        downloaded_data.to_excel(towrite, index=False)  
         towrite.seek(0)  
         st.download_button(  
             label="Download Excel File",  
