@@ -56,33 +56,32 @@ This app shows the war status of all members in a clan.
 
 clan_tag = st.text_input("Clan tag:")
 
-if 'fetch_pressed' not in st.session_state:  
-    st.session_state.fetch_pressed = False  
-  
-if st.button('Go fetch!'):  
-    st.session_state.fetch_pressed = True  
-    members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status(clan_tag))    
-    st.write("There are currently " + str(ready_for_war) + " players ready for war in " + str(clan_name) + ".")  
-    st.write(members_war_status)  
-    st.divider()  
-  
-if st.session_state.fetch_pressed:  
-    if st.button('Generate Excel File'):  
-        towrite = io.BytesIO()  
-        downloaded_data, _, _ = asyncio.run(get_clan_members_war_status(clan_tag))  
-        downloaded_data.to_excel(towrite, index=False)  
-        towrite.seek(0)  
-        st.download_button(  
-            label="Download Excel File",  
-            data=towrite,  
-            file_name="member_status_" + clan_name.replace(" ", "_") + "_" + datetime.datetime.now().strftime("%Y_%m_%d_%I_%M_%S") + ".xlsx",  
-            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'  
-        )  
-else:  
-    st.write("""   
-             Enter a clan tag and press 'Go fetch!' to display the data.  
-             You can find the clan tag just below the clan name in the My Clan info screen.  
-             """)  
+if 'fetch_pressed' not in st.session_state:
+    st.session_state.fetch_pressed = False
+
+if st.button('Go fetch!'):
+    st.session_state.fetch_pressed = True
+    st.session_state.members_war_status, st.session_state.ready_for_war, st.session_state.clan_name = asyncio.run(get_clan_members_war_status(clan_tag))
+    st.write("There are currently " + str(st.session_state.ready_for_war) + " players ready for war in " + str(st.session_state.clan_name) + ".")
+    st.write(st.session_state.members_war_status)
+    st.divider()
+
+if st.session_state.fetch_pressed:
+    if st.button('Generate Excel File'):
+        towrite = io.BytesIO()
+        st.session_state.members_war_status.to_excel(towrite, index=False)
+        towrite.seek(0)
+        st.download_button(
+            label="Download Excel File",
+            data=towrite,
+            file_name="member_status_" + st.session_state.clan_name.replace(" ", "_") + "_" + datetime.datetime.now().strftime("%Y_%m_%d_%I_%M_%S") + ".xlsx",
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+else:
+    st.write("""
+             Enter a clan tag and press 'Go fetch!' to display the data.
+             You can find the clan tag just below the clan name in the My Clan info screen.
+             """)
 
 st.divider()
 
