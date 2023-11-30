@@ -10,8 +10,8 @@ import streamlit as st
 async def get_coc_client():
     coc_client = coc.Client()
     try:
-        #await coc_client.login(os.getenv('COC_API_EMAIL'), os.getenv('COC_API_PASSWORD'))
-        await coc_client.login(st.secrets['COC_API_EMAIL'], st.secrets["COC_API_PASSWORD"])
+        await coc_client.login(os.getenv('COC_API_EMAIL'), os.getenv('COC_API_PASSWORD'))
+        #await coc_client.login(st.secrets['COC_API_EMAIL'], st.secrets["COC_API_PASSWORD"])
     except coc.InvalidCredentials as error:
         exit(error)
     return coc_client
@@ -20,19 +20,22 @@ async def get_clan_members_war_status(tag):
     coc_client = await get_coc_client()
     try:
         clan = await coc_client.get_clan(tag)
+        clan_name = clan.name
         members = clan.members
         data = []
         for member in members:
             player = await coc_client.get_player(member.tag)
             data.append({
                 'player': player.name,
-                'Role': member.role,
+                'role': member.role,
                 'warStatus': player.war_opted_in,
                 'warStars': player.war_stars,
                 'townHallLevel': player.town_hall,
                 'townHallWeaponLevel': player.town_hall_weapon
             })
-        return pd.DataFrame(data)
+        members_war_status = pd.DataFrame(data)
+        players_ready_for_war = members_war_status[members_war_status['warStatus'] == True].shape[0]
+        return members_war_status, players_ready_for_war, clan_name
     finally:
         await coc_client.close()
 
@@ -44,19 +47,23 @@ async def get_clan_name(tag):
     finally:
         await coc_client.close()
 
-
 # Building the streamlit app #
-st.markdown("""
-    ## Clan member war status
-""")
+"""
+## Clan member war status
 
-clan_tag = st.text_input("Enter clan tag in the form #nnnnnnnn:")
+This app shows the war status of all members in a clan. It is built using the [Streamlit](https://streamlit.io) framework.
+
+"""
+
+clan_tag = st.text_input("Enter clan tag:")
 
 if st.button('Go fetch!'):
-    war_status_df = asyncio.run(get_clan_members_war_status(clan_tag))
+    #war_status_df = asyncio.run(get_clan_members_war_status(clan_tag))
+    war_status_df, members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status('#V80U2J88'))  
+    st.write("There are currently " + str(ready_for_war) + " players ready for war in " + str(clan_name) + ".")
     st.write(war_status_df)
 else:
-    st.write("Please enter the Clan ID and press 'Refresh' to see the data.")
+    st.write("Please enter a clan tag and press 'Go fetch!' to display the data.")
 
 if st.button('Generate Excel File'):
     towrite = io.BytesIO()
@@ -69,6 +76,8 @@ if st.button('Generate Excel File'):
         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
-st.markdown("""
-    The code and documentation for this Streamlit app is available on GitHub: [GitHub Repository](https://github.com/sunefibaek/clan_status)
-""")
+st.divider()
+
+"""
+The code and documentation for this Streamlit app is available on GitHub: [GitHub Repository](https://github.com/sunefibaek/clan_status)
+"""
