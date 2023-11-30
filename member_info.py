@@ -57,9 +57,9 @@ This app shows the war status of all members in a clan.
 clan_tag = st.text_input("Clan tag:")
 
 if st.button('Go fetch!'):
-    war_status_df, members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status(clan_tag))  
+    members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status(clan_tag))  
     st.write("There are currently " + str(ready_for_war) + " players ready for war in " + str(clan_name) + ".")
-    st.write(war_status_df)
+    st.write(members_war_status)
     st.divider()
 
     if st.button('Generate Excel File'):
