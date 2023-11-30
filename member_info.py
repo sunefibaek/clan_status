@@ -10,8 +10,8 @@ import streamlit as st
 async def get_coc_client():
     coc_client = coc.Client()
     try:
-        await coc_client.login(os.getenv('COC_API_EMAIL'), os.getenv('COC_API_PASSWORD'))
-        #await coc_client.login(st.secrets['COC_API_EMAIL'], st.secrets["COC_API_PASSWORD"])
+        #await coc_client.login(os.getenv('COC_API_EMAIL'), os.getenv('COC_API_PASSWORD'))
+        await coc_client.login(st.secrets['COC_API_EMAIL'], st.secrets["COC_API_PASSWORD"])
     except coc.InvalidCredentials as error:
         exit(error)
     return coc_client
@@ -51,30 +51,32 @@ async def get_clan_name(tag):
 """
 ## Clan member war status
 
-This app shows the war status of all members in a clan. It is built using the [Streamlit](https://streamlit.io) framework.
-
+This app shows the war status of all members in a clan. 
 """
 
-clan_tag = st.text_input("Enter clan tag:")
+clan_tag = st.text_input("Clan tag:")
 
 if st.button('Go fetch!'):
-    #war_status_df = asyncio.run(get_clan_members_war_status(clan_tag))
-    war_status_df, members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status('#V80U2J88'))  
+    war_status_df, members_war_status, ready_for_war, clan_name = asyncio.run(get_clan_members_war_status(clan_tag))  
     st.write("There are currently " + str(ready_for_war) + " players ready for war in " + str(clan_name) + ".")
     st.write(war_status_df)
-else:
-    st.write("Please enter a clan tag and press 'Go fetch!' to display the data.")
+    st.divider()
 
-if st.button('Generate Excel File'):
-    towrite = io.BytesIO()
-    asyncio.run(get_clan_members_war_status(clan_tag)).to_excel(towrite, index=False)
-    towrite.seek(0)
-    st.download_button(
-        label="Download Excel File",
-        data=towrite,
-        file_name = "member_status_" + asyncio.run(get_clan_name(clan_tag)).replace(" ", "_") + "_" + datetime.datetime.now().strftime("%Y_%m_%d_%I_%M_%S") + ".xlsx",
-        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    )
+    if st.button('Generate Excel File'):
+        towrite = io.BytesIO()
+        asyncio.run(get_clan_members_war_status(clan_tag)).to_excel(towrite, index=False)
+        towrite.seek(0)
+        st.download_button(
+            label="Download Excel File",
+            data=towrite,
+            file_name = "member_status_" + asyncio.run(get_clan_name(clan_tag)).replace(" ", "_") + "_" + datetime.datetime.now().strftime("%Y_%m_%d_%I_%M_%S") + ".xlsx",
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )    
+else:
+    st.write(""" 
+             Enter a clan tag and press 'Go fetch!' to display the data.
+             You can find the clan tag just below the clan name in the My Clan info screen.
+             """)
 
 st.divider()
 
